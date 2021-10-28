@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use DB;
+use App\Models\Cart;
+use Session;
 
 class ProductController extends Controller
 {
+    public $totalQty=0;
     public function Index()
     {
         $product=DB::table('_products')->latest()->paginate(3);
@@ -20,6 +23,10 @@ class ProductController extends Controller
     public function create()
     {
         return view('Product.Create');
+    }
+    public function Cart()
+    {
+        return view('Product.Cart');
     }
     public function store(Request $request)
     {
@@ -43,7 +50,7 @@ class ProductController extends Controller
 
         $product=DB::table('_products')->insert($data);
 
-        return redirect()->route('Product.Index');
+        return redirect()->route('Product.Index')->with('success','Product Added successfully');
     }
     public function Edit($id)
     {
@@ -59,14 +66,60 @@ class ProductController extends Controller
         $data['Description']=$request->Description;
 
         $product=DB::table('_products')->where('id',$id)->update($data);
-        return redirect()->route('Product.Index');
+        return redirect()->route('Product.Index')->with('success','Edited successfully');
 
     }
     public function Delete($id)
     {
         $product=DB::table('_products')->where('id',$id)->delete();
-        return redirect()->route('Product.Index');
+        return redirect()->route('Product.Index')->with('success','Deleted successfully');
 
+    }
+    public function getAddToCard (Request $request, $id)
+    {
+        $product= DB::table('_products')->where('id',$id)->first();
+        
+        $cart = Session()->get('cart');
+
+        if(!$cart)
+        {
+            $cart =
+            [
+                    $product->id=>
+                    [
+                            'name'  => $product->Product_name,
+                            'id'  => $this->id,
+                            'Qty'   =>1,
+                            'price' => $product->Price
+                            
+                    ]
+
+            ];
+            Session()->put('cart', $cart);
+            return redirect()->route('Product.Index')->with('success','Added to Cart successfully');
+
+        }
+
+        if(isset($cart[$product->id]))
+        {
+            $cart[$product->id]['Qty']++;
+        
+            Session()->put('cart', $cart);
+            return redirect()->route('Product.Index')->with('success','Added to Cart successfully');
+
+        }
+
+        $cart[$product->id]=[
+
+                            'name'  => $product->Product_name,
+                            'id'  => $product->id,
+                            'Qty'   => 1,
+                            'price' => $product->Price,
+                        
+
+        ];
+        Session()->put('cart', $cart);
+        return redirect()->route('Product.Index')->with('success','Added to Cart successfully');
     }
 
 }

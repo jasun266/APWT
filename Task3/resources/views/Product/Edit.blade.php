@@ -13,7 +13,7 @@
 </div>
 
 <div class="col-md-6">
-    <form action="{{url('product/Update/'.$product->id)}}" method="POST">
+    <form action="{{url('Update/Product/'.$product->id)}}" method="POST">
         @csrf
             <div class="col-md-12 form-group">
                 <div class="form-group">

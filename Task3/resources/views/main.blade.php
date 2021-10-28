@@ -5,9 +5,9 @@
     <body>
 
         <div class="container">
-        <h2>  Add Your Product</h2>
+        <h2> ALL Products</h2>
             <div class="col-md-3">
-                <a href="{{route('Product.Index')}}" class="btn btn-info" role="button">  ADD PRODUCT</a>
+                <a href="{{route('Product.Index')}}" class="btn btn-info" role="button">All PRODUCT</a>
             </div>
         </div>
     </body>
